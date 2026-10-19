@@ -19,7 +19,7 @@ Example shape, using **illustrative coordinates only**:
 
 `GPSReadingSerializer` in `captures/serializers.py` validates each timestamp, coordinate and accuracy. `OffsetDateTimeField` requires an explicit offset or `Z`; this avoids silently guessing a device's timezone. `GPSBatchSerializer` requires 1–600 readings. This limit covers the proposal's five-minute, approximately once-per-second collection goal while bounding a request's database work.
 
-`GPSBatchUploadView` in `captures/views.py` first validates the **entire** batch. It then locks the owned session inside `transaction.atomic()`, rejects a repeat submission, and uses `bulk_create()` to save all rows together. If any item is invalid, no row is saved. The PostgreSQL coordinate and accuracy constraint remains a second layer of protection.
+`GPSBatchUploadView` in `captures/views.py` checks ownership before parsing the payload, then validates the **entire** batch. It locks the owned session inside `transaction.atomic()`, rejects a repeat submission, and uses `bulk_create()` to save all rows together. If any item is invalid, no row is saved. The PostgreSQL coordinate and accuracy constraint remains a second layer of protection.
 
 The database does not pretend that GPS is a pothole's exact location. Some readings can precede recording; processing must inspect timestamp gaps and reported accuracy. This endpoint does not align video frames, detect potholes, or publish a map point.
 

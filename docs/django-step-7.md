@@ -13,7 +13,7 @@ An authenticated rider can now send one MP4 file to `PUT /api/capture-sessions/<
 | `MultiPartParser` | Reads multipart uploads and makes the file available in `request.FILES`. |
 | `MAX_VIDEO_BYTES` | Sets a 300 MiB limit. The view checks declared request size before parsing and actual file size after parsing. A production reverse proxy must enforce its own body limit too. |
 | MP4 header check | Requires `.mp4` and an `ftyp` box near the beginning. This is only a shallow container check; it does not prove the video is decodable or safe for a media processor. |
-| `owner=request.user` lookup | Hides another rider's session with a 404 response. |
+| `owner=request.user` lookup | Hides another rider's session with a 404 response before parsing the file; the locked lookup repeats the check before saving. |
 | `select_for_update()` | Locks the session row while checking whether a video already exists, preventing two uploads from replacing each other on PostgreSQL. |
 | `transaction.atomic()` | Saves the row as one database transaction; an attempted file cleanup runs if that save fails. |
 

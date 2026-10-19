@@ -157,7 +157,7 @@ class CaptureVideoUploadTests(APITestCase):
             self.client.credentials(
                 HTTP_AUTHORIZATION=f"Token {Token.objects.create(user=self.other).key}"
             )
-            self.assertEqual(self.upload().status_code, 404)
+            self.assertEqual(self.upload(name="invalid.exe").status_code, 404)
             self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
 
             response = self.upload(name="../../private.mp4")
@@ -218,7 +218,7 @@ class GPSBatchAPITests(APITestCase):
             HTTP_AUTHORIZATION=f"Token {Token.objects.create(user=self.other).key}"
         )
         self.assertEqual(
-            self.client.post(self.url, {"readings": [self.reading]}, format="json").status_code,
+            self.client.post(self.url, {"readings": []}, format="json").status_code,
             404,
         )
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")

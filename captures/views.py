@@ -30,6 +30,7 @@ class CaptureVideoUploadView(APIView):
     parser_classes = [MultiPartParser]
 
     def put(self, request, session_id):
+        get_object_or_404(CaptureSession, pk=session_id, owner=request.user)
         raw_length = request.META.get("CONTENT_LENGTH")
         try:
             declared_size = int(raw_length) if raw_length else None
@@ -78,6 +79,7 @@ class CaptureVideoUploadView(APIView):
 
 class GPSBatchUploadView(APIView):
     def post(self, request, session_id):
+        get_object_or_404(CaptureSession, pk=session_id, owner=request.user)
         batch = GPSBatchSerializer(data=request.data)
         batch.is_valid(raise_exception=True)
 
