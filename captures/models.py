@@ -15,13 +15,14 @@ def video_upload_path(instance, filename):
 
 
 class CaptureSession(models.Model):
-    """Private metadata for one recorded journey; video upload comes later."""
+    """Private metadata for one recorded journey."""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     started_at = models.DateTimeField()
     ended_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    source_test_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     video = models.FileField(upload_to=video_upload_path, blank=True)
     video_uploaded_at = models.DateTimeField(null=True, blank=True)
 

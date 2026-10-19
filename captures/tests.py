@@ -1,6 +1,7 @@
 from datetime import timedelta
 from decimal import Decimal
 from io import StringIO
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
@@ -323,6 +324,85 @@ class CompleteUploadWorkflowTests(APITestCase):
             self.assertEqual(self.client.get(status_url).status_code, 404)
             self.client.credentials()
             self.assertEqual(self.client.get(status_url).status_code, 401)
+
+
+class ImportPhoneExportCommandTests(APITestCase):
+    test_id = "phone-test-00000000-0000-4000-8000-000000000001"
+
+    def make_export(self, folder):
+        start_ms = 1_700_000_000_000
+        locations = []
+        for offset in (-1000, 2000, 8000):
+            locations.append(
+                {
+                    "timestamp_epoch_ms": start_ms + offset,
+                    "offset_from_start_request_ms": offset,
+                    "latitude": 10.123456,
+                    "longitude": 20.654321,
+                    "accuracy_m": 12.5,
+                }
+            )
+        data = {
+            "schema_version": 1,
+            "test_id": self.test_id,
+            "recording_start_requested": {"epoch_ms": start_ms, "monotonic_ms": 1000},
+            "recording_stop_requested": {"epoch_ms": start_ms + 10000, "monotonic_ms": 11000},
+            "elapsed_ms": 10000,
+            "locations": locations,
+            "readings_during_recording": 2,
+            "stop_reason": "user",
+            "warnings": [],
+            "video_filename": f"{self.test_id}.mp4",
+            "video_mime_type": "video/mp4",
+            "video_bytes": 12,
+        }
+        json_file = Path(folder) / f"{self.test_id}.json"
+        json_file.write_text(json.dumps(data), encoding="utf-8")
+        (Path(folder) / data["video_filename"]).write_bytes(b"\x00\x00\x00\x18ftypisom")
+        return json_file
+
+    def test_dry_run_import_and_duplicate_protection(self):
+        user = get_user_model().objects.create_user("phone_import_owner")
+        token = Token.objects.create(user=user)
+        with TemporaryDirectory() as source, TemporaryDirectory() as media:
+            json_file = self.make_export(source)
+            output = StringIO()
+            with override_settings(MEDIA_ROOT=media):
+                call_command("import_phone_export", user.username, json_file, stdout=output)
+                self.assertEqual(CaptureSession.objects.count(), 0)
+                call_command("import_phone_export", user.username, json_file, apply=True, stdout=output)
+                session = CaptureSession.objects.get(source_test_id=self.test_id)
+                self.assertTrue((Path(media) / session.video.name).is_file())
+                self.assertEqual(session.gps_readings.count(), 2)
+                self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
+                response = self.client.get(f"/api/capture-sessions/{session.pk}/upload-status/")
+                self.assertEqual(response.data["gps_reading_count"], 2)
+                self.assertTrue(response.data["video_uploaded"])
+                with self.assertRaises(CommandError):
+                    call_command("import_phone_export", user.username, json_file, apply=True)
+            self.assertNotIn("10.123456", output.getvalue())
+            self.assertNotIn("20.654321", output.getvalue())
+
+    def test_rejects_mismatched_video_without_writing(self):
+        user = get_user_model().objects.create_user("phone_import_owner")
+        with TemporaryDirectory() as source, TemporaryDirectory() as media:
+            json_file = self.make_export(source)
+            (Path(source) / f"{self.test_id}.mp4").write_bytes(b"not the matching MP4")
+            with override_settings(MEDIA_ROOT=media), self.assertRaises(CommandError):
+                call_command("import_phone_export", user.username, json_file, apply=True)
+            self.assertEqual(CaptureSession.objects.count(), 0)
+            self.assertEqual(list(Path(media).rglob("*")), [])
+
+    def test_dry_run_rejects_zero_accuracy_before_import(self):
+        user = get_user_model().objects.create_user("phone_import_owner")
+        with TemporaryDirectory() as source:
+            json_file = self.make_export(source)
+            data = json.loads(json_file.read_text(encoding="utf-8"))
+            data["locations"][1]["accuracy_m"] = 0
+            json_file.write_text(json.dumps(data), encoding="utf-8")
+            with self.assertRaises(CommandError):
+                call_command("import_phone_export", user.username, json_file)
+            self.assertEqual(CaptureSession.objects.count(), 0)
 
 
 class CreateRiderCommandTests(APITestCase):
