@@ -22,6 +22,18 @@ class CaptureSessionListCreateView(ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 
+class CaptureSessionUploadStatusView(APIView):
+    def get(self, request, session_id):
+        session = get_object_or_404(CaptureSession, pk=session_id, owner=request.user)
+        return Response(
+            {
+                "session_id": str(session.pk),
+                "video_uploaded": bool(session.video),
+                "gps_reading_count": session.gps_readings.count(),
+            }
+        )
+
+
 MAX_VIDEO_BYTES = 300 * 1024 * 1024
 MAX_MULTIPART_OVERHEAD_BYTES = 1024 * 1024
 

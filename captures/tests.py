@@ -258,6 +258,73 @@ class GPSBatchAPITests(APITestCase):
         self.assertEqual(self.session.gps_readings.count(), 0)
 
 
+class CompleteUploadWorkflowTests(APITestCase):
+    def test_owner_can_confirm_video_and_gps_without_exposing_private_data(self):
+        owner = get_user_model().objects.create_user("workflow_owner")
+        other = get_user_model().objects.create_user("workflow_other")
+        owner_token = Token.objects.create(user=owner)
+        other_token = Token.objects.create(user=other)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {owner_token.key}")
+
+        with TemporaryDirectory() as root, override_settings(MEDIA_ROOT=root):
+            created = self.client.post(
+                "/api/capture-sessions/",
+                {
+                    "started_at": "2026-10-19T10:00:00Z",
+                    "ended_at": "2026-10-19T10:01:00Z",
+                },
+                format="json",
+            )
+            self.assertEqual(created.status_code, 201)
+            session_id = created.data["id"]
+            status_url = f"/api/capture-sessions/{session_id}/upload-status/"
+            video_url = f"/api/capture-sessions/{session_id}/video/"
+            gps_url = f"/api/capture-sessions/{session_id}/gps-readings/"
+
+            initial = self.client.get(status_url)
+            self.assertEqual(initial.status_code, 200)
+            self.assertEqual(
+                initial.data,
+                {"session_id": session_id, "video_uploaded": False, "gps_reading_count": 0},
+            )
+
+            video = SimpleUploadedFile(
+                "synthetic.mp4", b"\x00\x00\x00\x18ftypisom", content_type="video/mp4"
+            )
+            self.assertEqual(
+                self.client.put(video_url, {"video": video}, format="multipart").status_code,
+                201,
+            )
+            after_video = self.client.get(status_url)
+            self.assertEqual(after_video.data["video_uploaded"], True)
+            self.assertEqual(after_video.data["gps_reading_count"], 0)
+            reading = {
+                "captured_at": "2026-10-19T10:00:05Z",
+                "latitude": "26.452500",
+                "longitude": "87.271800",
+                "accuracy_m": "12.50",
+            }
+            self.assertEqual(
+                self.client.post(gps_url, {"readings": [reading]}, format="json").status_code,
+                201,
+            )
+
+            complete = self.client.get(status_url)
+            self.assertEqual(complete.status_code, 200)
+            self.assertEqual(
+                complete.data,
+                {"session_id": session_id, "video_uploaded": True, "gps_reading_count": 1},
+            )
+            self.assertNotIn("latitude", str(complete.data))
+            self.assertNotIn("longitude", str(complete.data))
+            self.assertNotIn("token", str(complete.data).lower())
+
+            self.client.credentials(HTTP_AUTHORIZATION=f"Token {other_token.key}")
+            self.assertEqual(self.client.get(status_url).status_code, 404)
+            self.client.credentials()
+            self.assertEqual(self.client.get(status_url).status_code, 401)
+
+
 class CreateRiderCommandTests(APITestCase):
     def test_creates_non_admin_rider_and_never_echoes_password(self):
         output = StringIO()
