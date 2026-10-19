@@ -16,6 +16,11 @@ class FirstRoutesTests(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"status": "ok"})
 
+    def test_health_response_has_protective_headers(self):
+        response = self.client.get("/health/")
+        self.assertEqual(response["X-Content-Type-Options"], "nosniff")
+        self.assertEqual(response["X-Frame-Options"], "DENY")
+
     @patch("backend.views.connection")
     def test_database_health(self, database):
         cursor = database.cursor.return_value.__enter__.return_value

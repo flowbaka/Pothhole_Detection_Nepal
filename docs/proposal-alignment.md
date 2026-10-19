@@ -27,10 +27,10 @@ The phone does not run YOLO. Do not infer pothole depth or physical severity fro
 
 Use road/journey separation for model evaluation so adjacent frames do not leak into the held-out set. The proposed schedule runs from October 2026 through May 2027. Android phone availability should be confirmed before planning a device test; the browser experiment does not establish Android behavior.
 
-## Next small backend lesson
+## Backend data-model progress
 
-Model a private **CaptureSession** first: one uploaded recording with start/end times and an owner. Then add timestamped GPS readings and candidate sightings in later lessons. A **Hazard** is the reviewed road defect that may combine sightings from multiple journeys. Review status belongs to this workflow; a latitude/longitude pair alone is not a public report.
+The first private **CaptureSession** model now stores an owner's recording start/end timestamps and creation time; see [Django lesson 3](django-step-3.md). Video upload is not implemented yet. Timestamped GPS readings and candidate sightings will follow in later lessons. A **Hazard** is the reviewed road defect that may combine sightings from multiple journeys. Review status belongs to this workflow; a latitude/longitude pair alone is not a public report.
 
-There is a local, untracked `reports/models.py` draft with a coordinate-only `Report`. Preserve it for discussion, but do not migrate it as the proposal schema. Agree on the model fields and relationships one small step at a time before creating PostgreSQL tables.
+There is a local, untracked `reports/models.py` draft with a coordinate-only `Report`. It has not been migrated as the proposal schema. Review that draft separately when the sighting and hazard models are designed.
 
 The proposed minimalist 3D reviewer dashboard is a **visual reference only**. No frontend implementation or real hazard data is included in this milestone.

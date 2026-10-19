@@ -11,8 +11,16 @@ DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 ROOT_URLCONF = "backend.urls"
-INSTALLED_APPS = []
-MIDDLEWARE = []
+INSTALLED_APPS = [
+    "django.contrib.contenttypes",
+    "django.contrib.auth",
+    "captures",
+]
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DB_VALUES = {
