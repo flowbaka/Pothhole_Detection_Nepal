@@ -1,11 +1,14 @@
 from datetime import timedelta
 from decimal import Decimal
+from io import StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import SimpleTestCase, override_settings
 from django.utils import timezone
@@ -253,3 +256,30 @@ class GPSBatchAPITests(APITestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(self.session.gps_readings.count(), 0)
+
+
+class CreateRiderCommandTests(APITestCase):
+    def test_creates_non_admin_rider_and_never_echoes_password(self):
+        output = StringIO()
+        password = "safe-example-2026-XYZ!"
+        with (
+            patch("builtins.input", return_value="local_rider"),
+            patch("captures.management.commands.create_rider.getpass", return_value=password),
+        ):
+            call_command("create_rider", stdout=output)
+
+        user = get_user_model().objects.get(username="local_rider")
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+        self.assertTrue(user.check_password(password))
+        self.assertEqual(Token.objects.filter(user=user).count(), 1)
+        self.assertNotIn(password, output.getvalue())
+
+    def test_rejects_weak_password_without_creating_user(self):
+        with (
+            patch("builtins.input", return_value="local_rider"),
+            patch("captures.management.commands.create_rider.getpass", return_value="short"),
+        ):
+            with self.assertRaises(CommandError):
+                call_command("create_rider", stdout=StringIO())
+        self.assertFalse(get_user_model().objects.filter(username="local_rider").exists())

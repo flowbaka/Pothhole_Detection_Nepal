@@ -63,6 +63,7 @@ The existing phone recording page still runs through the earlier FastAPI server 
 | `app/database.py` | Reads local connection settings and checks PostgreSQL with `SELECT 1`. |
 | `scripts/configure_database.py` | Prompts for the application password locally, checks it, and saves the ignored `.env`. |
 | `scripts/configure_django_secret.py` | Creates an ignored private Django signing key without printing it. |
+| `captures/management/commands/create_rider.py` | Interactively creates a non-admin local test rider and shows a private API token once. |
 | `.env.example` | Password-free reference for database settings. |
 | `tests/test_database.py` | Checks configuration, password preservation, connection failures and endpoint responses. |
 | `app/__init__.py` | Marks `app` as a Python package. |
