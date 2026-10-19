@@ -6,7 +6,7 @@ The [proposal-aligned scope and milestones](docs/proposal-alignment.md) describe
 
 ## What works now
 
-The backend is moving from FastAPI to Django in small lessons. [Django lesson 1](docs/django-step-1.md) adds `GET /` and `GET /health/` on local port 8003. [Django lesson 2](docs/django-step-2.md) connects it to PostgreSQL through `GET /health/database/`. [Django lesson 3](docs/django-step-3.md) creates a private `CaptureSession` table, [lesson 4](docs/django-step-4.md) adds timestamped GPS readings, and [lesson 6](docs/django-step-6.md) adds an authenticated, owner-only JSON API for session metadata. No video/GPS upload or public-report endpoint exists yet. The previously tested FastAPI server remains available on port 8001 for the phone recording experiment while that route is migrated. See [database setup](docs/database-setup.md).
+The backend is moving from FastAPI to Django in small lessons. [Django lesson 1](docs/django-step-1.md) adds `GET /` and `GET /health/` on local port 8003. [Django lesson 2](docs/django-step-2.md) connects it to PostgreSQL through `GET /health/database/`. [Django lesson 3](docs/django-step-3.md) creates a private `CaptureSession` table, [lesson 4](docs/django-step-4.md) adds timestamped GPS readings, [lesson 6](docs/django-step-6.md) adds an authenticated owner-only API, and [lesson 7](docs/django-step-7.md) adds a private MP4 upload to an owned session. GPS upload and public reporting do not exist yet. The previously tested FastAPI server remains available on port 8001 for the phone recording experiment while that route is migrated. See [database setup](docs/database-setup.md).
 
 The recording page captures a short video and timestamped browser location readings, then offers two local downloads. The user confirmed iPhone camera/location access, MP4 playback both on the page and after downloading to Files, and recording stopping with an interruption message when leaving Safari. Two real iPhone exports passed the local checker's timing-consistency and video filename, size and header checks. The outdoor test still had a 4.45-second initial location gap; exact video/location alignment and road-position accuracy remain unverified. Android device testing is pending. The recorder prefers H.264/MP4 when supported. Detection, uploads, database storage and the map are still future milestones.
 
@@ -56,7 +56,8 @@ The existing phone recording page still runs through the earlier FastAPI server 
 | `captures/tests.py` | Checks valid and invalid recording intervals. |
 | `captures/migrations/0002_gpsreading.py` | Creates the private GPS-reading table and its bounds checks. |
 | `captures/serializers.py` | Validates API timestamps and exposes only session metadata. |
-| `captures/views.py` | Lists a rider's sessions and assigns new sessions to that rider. |
+| `captures/views.py` | Lists owned sessions, creates them, and accepts a private MP4 for an owned session. |
+| `captures/migrations/0003_capturesession_video_and_more.py` | Adds private video metadata to the session table. |
 | `backend/test_settings.py` | Uses an isolated SQLite database for API tests. |
 | `app/main.py` | Earlier FastAPI server, kept during the phone-page transition. |
 | `app/database.py` | Reads local connection settings and checks PostgreSQL with `SELECT 1`. |
@@ -95,7 +96,7 @@ git log --oneline -5
 ## Development order
 
 1. Django backend foundation — request handling, PostgreSQL connection, private capture sessions and timestamped GPS readings verified.
-2. Authenticated, owner-only session metadata API verified. Next add restricted uploads in Django/DRF, keeping footage and routes private.
+2. Authenticated, owner-only session metadata and private MP4 upload APIs verified. Next add validated GPS batch uploads, keeping routes private.
 3. Build and test an Android Expo collector for foreground video/GPS capture and upload after stopping. The existing iPhone browser test is separate feasibility evidence.
 4. Collect and label the proposed local dataset, keeping held-out roads and journeys separate for evaluation.
 5. Compare YOLO11n baseline with fine-tuned YOLO26n and YOLO26s; add tracking and video/GPS matching in a separate worker.

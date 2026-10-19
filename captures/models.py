@@ -8,6 +8,12 @@ from django.db import models
 from django.db.models import F, Q
 
 
+def video_upload_path(instance, filename):
+    """Use the session ID instead of a filename supplied by the client."""
+
+    return f"capture-videos/{instance.pk}/video.mp4"
+
+
 class CaptureSession(models.Model):
     """Private metadata for one recorded journey; video upload comes later."""
 
@@ -16,6 +22,8 @@ class CaptureSession(models.Model):
     started_at = models.DateTimeField()
     ended_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    video = models.FileField(upload_to=video_upload_path, blank=True)
+    video_uploaded_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
