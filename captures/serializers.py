@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal
 
 from rest_framework import serializers
 
@@ -29,3 +30,28 @@ class CaptureSessionSerializer(serializers.ModelSerializer):
                 {"ended_at": "End time must be after start time."}
             )
         return attrs
+
+
+class GPSReadingSerializer(serializers.Serializer):
+    captured_at = OffsetDateTimeField()
+    latitude = serializers.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        min_value=Decimal("-90"),
+        max_value=Decimal("90"),
+    )
+    longitude = serializers.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        min_value=Decimal("-180"),
+        max_value=Decimal("180"),
+    )
+    accuracy_m = serializers.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        min_value=Decimal("0.01"),
+    )
+
+
+class GPSBatchSerializer(serializers.Serializer):
+    readings = GPSReadingSerializer(many=True, allow_empty=False, max_length=600)

@@ -2,7 +2,7 @@
 
 from django.urls import path
 
-from captures.views import CaptureSessionListCreateView, CaptureVideoUploadView
+from captures.views import CaptureSessionListCreateView, CaptureVideoUploadView, GPSBatchUploadView
 
 from . import views
 
@@ -16,5 +16,10 @@ urlpatterns = [
         "api/capture-sessions/<uuid:session_id>/video/",
         CaptureVideoUploadView.as_view(),
         name="capture_video_upload",
+    ),
+    path(
+        "api/capture-sessions/<uuid:session_id>/gps-readings/",
+        GPSBatchUploadView.as_view(),
+        name="gps_batch_upload",
     ),
 ]

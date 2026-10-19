@@ -29,7 +29,7 @@ Use road/journey separation for model evaluation so adjacent frames do not leak 
 
 ## Backend data-model progress
 
-The private **CaptureSession** model stores an owner's recording start/end timestamps and creation time; [Django lesson 3](django-step-3.md) explains it. [Lesson 4](django-step-4.md) adds private timestamped GPS readings. [Lesson 6](django-step-6.md) adds an authenticated, owner-only session metadata API, and [lesson 7](django-step-7.md) adds private MP4 upload. GPS upload and candidate sightings will follow. A **Hazard** is the reviewed road defect that may combine sightings from multiple journeys. Review status belongs to this workflow; a latitude/longitude pair alone is not a public report.
+The private **CaptureSession** model stores an owner's recording start/end timestamps and creation time; [Django lesson 3](django-step-3.md) explains it. [Lesson 4](django-step-4.md) adds private timestamped GPS readings. [Lesson 6](django-step-6.md) adds an authenticated owner-only session API, [lesson 7](django-step-7.md) adds private MP4 upload, and [lesson 8](django-step-8.md) adds GPS batch upload. Candidate sightings and reviewed hazards will follow. A **Hazard** is the reviewed road defect that may combine sightings from multiple journeys. Review status belongs to this workflow; a latitude/longitude pair alone is not a public report.
 
 There is a local, untracked `reports/models.py` draft with a coordinate-only `Report`. It has not been migrated as the proposal schema. Review that draft separately when the sighting and hazard models are designed.
 

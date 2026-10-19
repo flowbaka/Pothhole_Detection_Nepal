@@ -183,3 +183,73 @@ class CaptureVideoUploadTests(APITestCase):
             self.session.refresh_from_db()
             self.assertFalse(self.session.video)
             self.assertEqual(list(Path(root).rglob("*")), [])
+
+
+class GPSBatchAPITests(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner = get_user_model().objects.create_user("gps_owner")
+        cls.other = get_user_model().objects.create_user("gps_other")
+        cls.token = Token.objects.create(user=cls.owner)
+
+    def setUp(self):
+        start = timezone.now()
+        self.session = CaptureSession.objects.create(
+            owner=self.owner, started_at=start, ended_at=start + timedelta(minutes=1)
+        )
+        self.url = f"/api/capture-sessions/{self.session.pk}/gps-readings/"
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+        self.reading = {
+            "captured_at": "2026-10-19T10:00:01Z",
+            "latitude": "26.452500",
+            "longitude": "87.271800",
+            "accuracy_m": "12.50",
+        }
+
+    def test_requires_owner_and_saves_valid_batch_once(self):
+        self.assertEqual(
+            APIClient().post(self.url, {"readings": [self.reading]}, format="json").status_code,
+            401,
+        )
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Token {Token.objects.create(user=self.other).key}"
+        )
+        self.assertEqual(
+            self.client.post(self.url, {"readings": [self.reading]}, format="json").status_code,
+            404,
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+
+        response = self.client.post(self.url, {"readings": [self.reading]}, format="json")
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(self.session.gps_readings.count(), 1)
+        self.assertEqual(
+            self.client.post(self.url, {"readings": [self.reading]}, format="json").status_code,
+            409,
+        )
+        self.assertNotIn("gps_readings", self.client.get("/api/capture-sessions/").data[0])
+
+    def test_invalid_item_rejects_the_whole_batch(self):
+        for invalid in [
+            {**self.reading, "latitude": "91"},
+            {**self.reading, "accuracy_m": "0"},
+            {**self.reading, "captured_at": "2026-10-19T10:00:01"},
+        ]:
+            response = self.client.post(
+                self.url,
+                {"readings": [self.reading, invalid]},
+                format="json",
+            )
+            self.assertEqual(response.status_code, 400)
+            self.assertEqual(self.session.gps_readings.count(), 0)
+
+    def test_caps_batch_size(self):
+        response = self.client.post(
+            self.url,
+            {"readings": [self.reading] * 601},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(self.session.gps_readings.count(), 0)

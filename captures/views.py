@@ -8,8 +8,8 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import CaptureSession
-from .serializers import CaptureSessionSerializer
+from .models import CaptureSession, GPSReading
+from .serializers import CaptureSessionSerializer, GPSBatchSerializer
 
 
 class CaptureSessionListCreateView(ListCreateAPIView):
@@ -74,3 +74,24 @@ class CaptureVideoUploadView(APIView):
                 raise
 
         return Response({"status": "stored"}, status=201)
+
+
+class GPSBatchUploadView(APIView):
+    def post(self, request, session_id):
+        batch = GPSBatchSerializer(data=request.data)
+        batch.is_valid(raise_exception=True)
+
+        with transaction.atomic():
+            session = get_object_or_404(
+                CaptureSession.objects.select_for_update(),
+                pk=session_id,
+                owner=request.user,
+            )
+            if session.gps_readings.exists():
+                return Response({"error": "This journey already has GPS readings."}, status=409)
+            GPSReading.objects.bulk_create(
+                GPSReading(session=session, **reading)
+                for reading in batch.validated_data["readings"]
+            )
+
+        return Response({"status": "stored", "count": len(batch.validated_data["readings"])}, status=201)
