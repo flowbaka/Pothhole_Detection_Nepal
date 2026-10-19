@@ -14,6 +14,8 @@ ROOT_URLCONF = "backend.urls"
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.auth",
+    "rest_framework",
+    "rest_framework.authtoken",
     "captures",
 ]
 MIDDLEWARE = [
@@ -37,6 +39,24 @@ if not SECRET_KEY:
         "Set DJANGO_SECRET_KEY in the environment or run "
         "python -m scripts.configure_django_secret."
     )
+
+TIME_ZONE = "UTC"
+USE_TZ = True
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+    ],
+}
 
 DATABASES = {
     "default": {
