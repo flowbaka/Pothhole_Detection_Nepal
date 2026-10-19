@@ -6,9 +6,9 @@ The [proposal-aligned scope and milestones](docs/proposal-alignment.md) describe
 
 ## What works now
 
-The backend is moving from FastAPI to Django in small lessons. [Django lesson 1](docs/django-step-1.md) adds `GET /` and `GET /health/` on local port 8003. [Django lesson 2](docs/django-step-2.md) connects it to PostgreSQL through `GET /health/database/`. [Django lesson 3](docs/django-step-3.md) creates a private `CaptureSession` table, [lesson 4](docs/django-step-4.md) adds timestamped GPS readings, [lesson 6](docs/django-step-6.md) adds an authenticated owner-only API, [lesson 7](docs/django-step-7.md) adds private MP4 upload, and [lesson 8](docs/django-step-8.md) adds an owner-only GPS batch upload. Detection and public reporting do not exist yet. The previously tested FastAPI server remains available on port 8001 for the phone recording experiment while that route is migrated. See [database setup](docs/database-setup.md).
+The backend is moving from FastAPI to Django in small lessons. [Django lesson 1](docs/django-step-1.md) starts the server on local port 8003. [Django lesson 2](docs/django-step-2.md) connects it to PostgreSQL through `GET /health/database/`. [Django lesson 3](docs/django-step-3.md) creates a private `CaptureSession` table, [lesson 4](docs/django-step-4.md) adds timestamped GPS readings, [lesson 6](docs/django-step-6.md) adds an authenticated owner-only API, [lesson 7](docs/django-step-7.md) adds private MP4 upload, and [lesson 8](docs/django-step-8.md) adds an owner-only GPS batch upload. [Lesson 10](docs/django-step-10.md) adds the first Django homepage. Detection and public reporting do not exist yet. The previously tested FastAPI server remains available on port 8001 for the phone recording experiment while that route is migrated. See [database setup](docs/database-setup.md).
 
-The recording page captures a short video and timestamped browser location readings, then offers two local downloads. The user confirmed iPhone camera/location access, MP4 playback both on the page and after downloading to Files, and recording stopping with an interruption message when leaving Safari. Two real iPhone exports passed the local checker's timing-consistency and video filename, size and header checks. The outdoor test still had a 4.45-second initial location gap; exact video/location alignment and road-position accuracy remain unverified. Android device testing is pending. The recorder prefers H.264/MP4 when supported. Detection, uploads, database storage and the map are still future milestones.
+The recording page captures a short video and timestamped browser location readings, then offers two local downloads. The user confirmed iPhone camera/location access, MP4 playback both on the page and after downloading to Files, and recording stopping with an interruption message when leaving Safari. Two real iPhone exports passed the local checker's timing-consistency and video filename, size and header checks. The outdoor test still had a 4.45-second initial location gap; exact video/location alignment and road-position accuracy remain unverified. Android device testing is pending. The recorder prefers H.264/MP4 when supported. The Django API now accepts private journey uploads, but the browser recorder is not connected to that API. Detection and the public map remain future milestones.
 
 ## Run on Windows (PowerShell)
 
@@ -32,7 +32,7 @@ python manage.py runserver 127.0.0.1:8003
 
 If PowerShell blocks activation, use the direct commands above; no execution-policy change is needed. You only need to install requirements on first setup or when they change. The signing-key command is safe to repeat: it preserves an existing key. See [Django lesson 5](docs/django-step-5.md).
 
-Open http://127.0.0.1:8003 to see:
+Open http://127.0.0.1:8003/ to see the project homepage. It explains the planned capture-review-inform workflow and distinguishes features that work from those still in development. The route illustration is not live hazard data. The original JSON response moved to http://127.0.0.1:8003/api/status/:
 
 ```json
 {"message":"Django backend is running"}
@@ -49,7 +49,9 @@ The existing phone recording page still runs through the earlier FastAPI server 
 | `manage.py` | Runs Django commands such as `runserver`, `check` and `test`. |
 | `backend/settings.py` | Django configuration, including the local PostgreSQL connection. |
 | `backend/urls.py` | Connects URL paths to Django views. |
-| `backend/views.py` | Returns JSON responses for the first two routes. |
+| `backend/views.py` | Renders the homepage and returns the JSON health and status responses. |
+| `backend/templates/backend/home.html` | Homepage content and accessible page structure. |
+| `backend/static/backend/home.css` | Responsive visual design for the homepage. |
 | `backend/tests.py` | Checks the Django URL-to-view behavior. |
 | `captures/models.py` | Defines a private journey's owner and start/end timestamps. |
 | `captures/migrations/0001_initial.py` | Creates the capture-session table and its time-order constraint. |
@@ -105,7 +107,7 @@ git log --oneline -5
 7. Build the reviewer workflow, verified-only Leaflet/OpenStreetMap map and foreground Android audio alerts.
 8. Validate the complete pipeline, timing and controlled user feedback; finish the dissertation.
 
-Proceed one small backend lesson at a time. Frontend implementation is deferred; the 3D dashboard image is a design reference only. See the [proposal-aligned targets](docs/proposal-alignment.md) for the evaluation counts and current status.
+Proceed one small milestone at a time. The current frontend is a project homepage; the reviewer dashboard, live map and rider alerts remain to be built. See the [proposal-aligned targets](docs/proposal-alignment.md) for the evaluation counts and current status.
 
 ## Scope and accuracy
 

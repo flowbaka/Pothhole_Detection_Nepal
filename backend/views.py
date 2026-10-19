@@ -2,9 +2,14 @@
 
 from django.http import JsonResponse
 from django.db import DatabaseError, connection
+from django.shortcuts import render
 
 
 def home(request):
+    return render(request, "backend/home.html")
+
+
+def api_status(request):
     return JsonResponse({"message": "Django backend is running"})
 
 

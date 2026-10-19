@@ -14,6 +14,7 @@ ROOT_URLCONF = "backend.urls"
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.auth",
+    "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
     "captures",
@@ -25,6 +26,16 @@ MIDDLEWARE = [
 ]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "backend" / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {},
+    }
+]
+STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "backend" / "static"]
 DB_VALUES = {
     "DB_HOST": "127.0.0.1",
     "DB_PORT": "5432",

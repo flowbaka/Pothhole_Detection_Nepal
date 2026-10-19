@@ -22,7 +22,7 @@ The phone does not run YOLO. Do not infer pothole depth or physical severity fro
 | Tracking | Review 30 sequences manually | Not started. |
 | Geolocation | Reference locations for at least 20 distinct potholes; report median and 90th-percentile error | Not started. |
 | Duplicate grouping | At least 30 labeled pairs, including nearby distinct potholes; measure false merges | Not started. |
-| Backend and service | Django/DRF roles, PostgreSQL, reviewer workflow, verified-only map and foreground Android alerts | Django health routes and PostgreSQL connection work; the rest is not built. |
+| Backend and service | Django/DRF roles, PostgreSQL, reviewer workflow, verified-only map and foreground Android alerts | Django/PostgreSQL, private owner-only capture APIs, and a project homepage work. Reviewer workflow, public map and alerts are not built. |
 | Validation | System/timing checks and feedback from 5–8 consenting adults in stationary or controlled settings | Not started. |
 
 Use road/journey separation for model evaluation so adjacent frames do not leak into the held-out set. The proposed schedule runs from October 2026 through May 2027. Android phone availability should be confirmed before planning a device test; the browser experiment does not establish Android behavior.
@@ -33,4 +33,4 @@ The private **CaptureSession** model stores an owner's recording start/end times
 
 There is a local, untracked `reports/models.py` draft with a coordinate-only `Report`. It has not been migrated as the proposal schema. Review that draft separately when the sighting and hazard models are designed.
 
-The proposed minimalist 3D reviewer dashboard is a **visual reference only**. No frontend implementation or real hazard data is included in this milestone.
+The proposed minimalist 3D reviewer dashboard is a **visual reference only**. The current frontend is a project homepage, not a reviewer dashboard, and does not show real hazard data.

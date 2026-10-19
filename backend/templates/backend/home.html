@@ -1,0 +1,129 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pothole Detection Nepal is a final-year project exploring reviewed road-hazard records from journey video and GPS evidence.">
+  <title>Pothole Detection Nepal — Better road evidence</title>
+  <link rel="stylesheet" href="{% static 'backend/home.css' %}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Pothole Detection Nepal, home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span></span>
+        <span class="brand-name">Pothole<br>Detection Nepal</span>
+      </a>
+      <nav class="primary-nav" aria-label="Main navigation">
+        <a href="#approach">Approach</a>
+        <a href="#progress">Project progress</a>
+        <a href="#about">About</a>
+      </nav>
+      <span class="header-note">Research prototype <span aria-hidden="true">↗</span></span>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span>Road intelligence, grounded in evidence</p>
+          <h1 id="hero-title">A clearer view<br>of the <em>road ahead.</em></h1>
+          <p class="hero-intro">Turning journey video and location readings into road-hazard records people can review and trust.</p>
+          <p class="hero-caveat">A final-year research project for Biratnagar. Detection and public alerts are in development.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#approach">Explore the approach <span aria-hidden="true">↗</span></a>
+            <a class="text-link" href="#progress">See what works now <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+
+        <div class="visual-panel" role="img" aria-label="Abstract illustration of a road route and a review marker; this is not a live map">
+          <div class="visual-topline"><span>FIELD NOTE / 001</span><span>NEPAL · ROAD RESEARCH</span></div>
+          <svg class="road-illustration" viewBox="0 0 580 530" aria-hidden="true" focusable="false">
+            <rect width="580" height="530" fill="#d7ddd4"/>
+            <path d="M-20 129 C91 74 142 104 223 36 S433 20 609 -18" fill="none" stroke="#c6cfc4" stroke-width="65"/>
+            <path d="M-40 424 C62 378 94 294 173 269 S302 338 364 291 473 197 618 211" fill="none" stroke="#c1c9bf" stroke-width="49"/>
+            <path d="M49 560 C104 437 182 421 253 372 S280 277 361 209 464 140 542 -15" fill="none" stroke="#f2f0e8" stroke-width="98" stroke-linecap="round"/>
+            <path d="M49 560 C104 437 182 421 253 372 S280 277 361 209 464 140 542 -15" fill="none" stroke="#e3e2d8" stroke-width="4" stroke-dasharray="13 15" stroke-linecap="round"/>
+            <path d="M-20 501 C102 488 127 451 204 470 S367 493 603 442" fill="none" stroke="#a9b5a9" stroke-width="2" opacity=".62"/>
+            <path d="M-20 514 C102 501 127 464 204 483 S367 506 603 455" fill="none" stroke="#a9b5a9" stroke-width="2" opacity=".45"/>
+            <path d="M-20 527 C102 514 127 477 204 496 S367 519 603 468" fill="none" stroke="#a9b5a9" stroke-width="2" opacity=".32"/>
+            <circle cx="317" cy="247" r="50" fill="#b66b47" opacity=".14"/>
+            <circle cx="317" cy="247" r="27" fill="#b66b47" opacity=".19"/>
+            <circle cx="317" cy="247" r="10" fill="#b66b47" stroke="#f7f5ee" stroke-width="5"/>
+            <circle cx="238" cy="383" r="6" fill="#26372f"/>
+          </svg>
+          <div class="visual-label"><span class="label-dash" aria-hidden="true"></span> Observe <span class="label-arrow" aria-hidden="true">→</span> Review <span class="label-arrow" aria-hidden="true">→</span> Inform</div>
+          <div class="visual-footnote">Illustrative route · Not live hazard data</div>
+        </div>
+      </section>
+
+      <div class="section-rule" aria-hidden="true"><span>01 / THE APPROACH</span><span>SCROLL TO EXPLORE ↓</span></div>
+
+      <section class="approach section-pad" id="approach" aria-labelledby="approach-title">
+        <div class="section-heading">
+          <p class="eyebrow">How it works</p>
+          <h2 id="approach-title">From road footage<br>to useful context.</h2>
+          <p>Each step adds evidence. A road hazard only reaches the public map after human review.</p>
+        </div>
+        <div class="steps" role="list">
+          <article class="step" role="listitem">
+            <div class="step-head"><span>01</span><span class="step-symbol" aria-hidden="true">◉</span></div>
+            <h3>Capture</h3>
+            <p>A rider records video with timestamped location readings, then uploads after stopping safely.</p>
+          </article>
+          <article class="step" role="listitem">
+            <div class="step-head"><span>02</span><span class="step-symbol" aria-hidden="true">⌁</span></div>
+            <h3>Review</h3>
+            <p>Computer vision will suggest possible potholes. A reviewer checks the evidence and approximate location.</p>
+          </article>
+          <article class="step" role="listitem">
+            <div class="step-head"><span>03</span><span class="step-symbol" aria-hidden="true">↗</span></div>
+            <h3>Inform</h3>
+            <p>Only verified hazards will appear on the public map and support nearby audio alerts.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="progress section-pad" id="progress" aria-labelledby="progress-title">
+        <div class="progress-intro">
+          <p class="eyebrow">Project progress</p>
+          <h2 id="progress-title">Built in the open.<br><em>Checked at every step.</em></h2>
+          <p>This is an active prototype. The interface describes the current system without presenting sample routes or alerts as real road data.</p>
+        </div>
+        <div class="progress-board">
+          <div class="board-column">
+            <span class="board-kicker"><span class="status-dot" aria-hidden="true"></span>Working now</span>
+            <ul>
+              <li>Private journey sessions</li>
+              <li>Authenticated video and GPS uploads</li>
+              <li>Owner-only access to session records</li>
+            </ul>
+          </div>
+          <div class="board-column">
+            <span class="board-kicker muted">In development</span>
+            <ul>
+              <li>Pothole detection and location matching</li>
+              <li>Human review of suggested hazards</li>
+              <li>Verified-only map and rider alerts</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing section-pad" id="about" aria-labelledby="closing-title">
+        <p class="eyebrow">Made for more careful decisions</p>
+        <h2 id="closing-title">A point on a map is only useful<br>when you know <em>where it came from.</em></h2>
+        <p>GPS positions are approximate. This research prototype does not measure pothole depth or guarantee road safety.</p>
+        <a class="text-link" href="#main">Back to top <span aria-hidden="true">↑</span></a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Pothole Detection Nepal</span>
+      <span>Final-year research project · Biratnagar</span>
+      <span>Prototype / Local development</span>
+    </footer>
+  </div>
+</body>
+</html>

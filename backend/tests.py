@@ -9,6 +9,12 @@ class FirstRoutesTests(SimpleTestCase):
     def test_home(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
+        self.assertIn("text/html", response["Content-Type"])
+        self.assertContains(response, "Pothole Detection Nepal")
+        self.assertContains(response, "Detection and public alerts are in development")
+
+    def test_api_status(self):
+        response = self.client.get("/api/status/")
         self.assertEqual(response.json(), {"message": "Django backend is running"})
 
     def test_health(self):
