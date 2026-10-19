@@ -76,7 +76,7 @@ The existing phone recording page still runs through the earlier FastAPI server 
 
 ## GitHub checkpoints
 
-Source repository: [flowbaka/pothole_detection_website](https://github.com/flowbaka/pothole_detection_website).
+Source repository: [flowbaka/Pothhole_Detection_Nepal](https://github.com/flowbaka/Pothhole_Detection_Nepal).
 
 Git is initialized on `main`. Completed small milestones are committed and pushed to `origin` at the user's request. Review the changes and staged file list for each checkpoint. Record automated checks and actual phone results separately; a source push is not website deployment.
 
