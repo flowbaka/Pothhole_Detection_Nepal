@@ -2,11 +2,13 @@
 
 Computer vision final-year project for Biratnagar International College, Nepal.
 
+The [proposal-aligned scope and milestones](docs/proposal-alignment.md) describe the intended Android Expo collector, Django/DRF processing workflow, reviewed hazards and alerts. The current iPhone browser recorder is a feasibility experiment, not the proposed Android app.
+
 ## What works now
 
 The backend is moving from FastAPI to Django in small lessons. [Django lesson 1](docs/django-step-1.md) adds `GET /` and `GET /health/` on local port 8003. [Django lesson 2](docs/django-step-2.md) connects it to PostgreSQL through `GET /health/database/`; a real HTTP request confirmed access to `pothole_db` with the existing local settings. The previously tested FastAPI server remains available on port 8001 for the phone recording experiment while that route is migrated. No report tables have been created yet. See [database setup](docs/database-setup.md).
 
-The recording page captures a short video and timestamped browser location readings, then offers two local downloads. The user confirmed iPhone camera/location access, MP4 playback both on the page and after downloading to Files, and recording stopping with an interruption message when leaving Safari. Two real iPhone exports passed the local checker's timing-consistency and video filename, size and header checks. The outdoor test still had a 4.45-second initial location gap; exact video/location alignment and road-position accuracy remain unverified. Android testing is pending because no phone is available. The recorder prefers H.264/MP4 when supported. Detection, uploads, database storage and the map are still future milestones.
+The recording page captures a short video and timestamped browser location readings, then offers two local downloads. The user confirmed iPhone camera/location access, MP4 playback both on the page and after downloading to Files, and recording stopping with an interruption message when leaving Safari. Two real iPhone exports passed the local checker's timing-consistency and video filename, size and header checks. The outdoor test still had a 4.45-second initial location gap; exact video/location alignment and road-position accuracy remain unverified. Android device testing is pending. The recorder prefers H.264/MP4 when supported. Detection, uploads, database storage and the map are still future milestones.
 
 ## Run on Windows (PowerShell)
 
@@ -83,22 +85,22 @@ git log --oneline -5
 
 ## Development order
 
-1. Django backend foundation — request handling and PostgreSQL connection verified. The first report model and migration are next.
-2. Phone feasibility experiment: iPhone camera, location, both MP4 playback checks and visible interruption behavior confirmed by the user; two local exports inspected. Android, exact media alignment and road-quality checks remain pending. Current iPhone checkpoint complete; proceed one small backend milestone at a time.
-3. PostgreSQL reports and photo uploads; validate files and coordinates.
-4. Leaflet/OpenStreetMap page with clickable report markers and photos, initially using manually confirmed locations.
-5. Pothole detection baseline and evaluation on held-out local Nepal footage.
-6. Video tracking, duplicate reduction, evidence-frame selection and video/GPS timestamp matching.
-7. Public submission, verification and authorised repair-status updates.
-8. Experimental visual severity, comparisons, testing and dissertation.
+1. Django backend foundation — request handling and PostgreSQL connection verified. Next, design a private capture-session model before creating a migration.
+2. Add timestamped GPS readings and authenticated upload handling in Django/DRF, with private footage and routes.
+3. Build and test an Android Expo collector for foreground video/GPS capture and upload after stopping. The existing iPhone browser test is separate feasibility evidence.
+4. Collect and label the proposed local dataset, keeping held-out roads and journeys separate for evaluation.
+5. Compare YOLO11n baseline with fine-tuned YOLO26n and YOLO26s; add tracking and video/GPS matching in a separate worker.
+6. Model sightings, reviewed hazards, duplicate suggestions and review history. Measure location error and false merges.
+7. Build the reviewer workflow, verified-only Leaflet/OpenStreetMap map and foreground Android audio alerts.
+8. Validate the complete pipeline, timing and controlled user feedback; finish the dissertation.
 
-Learn and collect data throughout the 7–8 months. Split model evaluation by road/journey rather than neighbouring frames. First process journeys after recording; live updates are a later extension.
+Proceed one small backend lesson at a time. Frontend implementation is deferred; the 3D dashboard image is a design reference only. See the [proposal-aligned targets](docs/proposal-alignment.md) for the evaluation counts and current status.
 
 ## Scope and accuracy
 
 Store each GPS reading's capture timestamp and accuracy, together with the recording start time. Upload-time location cannot locate an earlier journey. GPS initially locates the phone; a pothole ahead of the vehicle will have an additional offset. Reports must communicate approximate positioning and allow correction. An ordinary image alone does not establish pothole depth or physical severity.
 
-Keep full journey traces private by default, and publish only needed report information. Before public deployment add authentication, authorisation, secure uploads, HTTPS and appropriate privacy controls. These are future work, not protections implemented by this starter.
+Keep full journey traces private by default, and publish only verified hazards with the minimum needed information. Before public deployment add authentication, authorisation, secure uploads, HTTPS and appropriate privacy controls. These are future work, not protections implemented by this starter.
 
 ## References
 

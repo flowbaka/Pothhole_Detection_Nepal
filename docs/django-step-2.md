@@ -33,6 +33,6 @@ The key new flow is: **request → URL rule → view → Django connection → P
 .\.pothholevenv\Scripts\python.exe manage.py test backend.tests
 ```
 
-Both commands passed locally. The next lesson will define the first `Report` model and create its table through a Django migration. A model describes rows in Python; a migration changes the actual PostgreSQL schema.
+Both commands passed locally. After reviewing the FYP proposal, the next lesson is to design a private `CaptureSession` model for one uploaded recording. The local coordinate-only `Report` draft does not represent a capture session, sighting, reviewed hazard and approval history, so it should not be migrated as the proposal schema. A model describes rows in Python; a migration changes the actual PostgreSQL schema. We will explain and check the model before creating its table.
 
 Reference: [Django's PostgreSQL configuration](https://docs.djangoproject.com/en/5.2/ref/databases/#postgresql-notes) and [direct SQL cursor usage](https://docs.djangoproject.com/en/5.2/topics/db/sql/#executing-custom-sql-directly).

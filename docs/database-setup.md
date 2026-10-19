@@ -89,7 +89,7 @@ Seven automated tests cover missing configuration, invalid ports, literal passwo
 .\.pothholevenv\Scripts\python.exe -m unittest discover -s tests -p test_database.py -v
 ```
 
-The real API check is complete. It ran only `SELECT 1`, so it does not establish that report tables or uploads exist. The next checkpoint will add the first report table.
+The real API check is complete. It ran only `SELECT 1`, so it does not establish that capture-session tables or uploads exist. After aligning with the FYP proposal, the next backend lesson is to design a private `CaptureSession` before creating its migration; see the [proposal-aligned scope](proposal-alignment.md).
 
 Driver/configuration references: [Psycopg connections](https://www.psycopg.org/psycopg3/docs/basic/usage.html), [python-dotenv](https://bbc2.github.io/python-dotenv/reference/).
 
