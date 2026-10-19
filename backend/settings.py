@@ -3,10 +3,10 @@
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import dotenv_values
 
-# Development only. We will configure a private key before adding logins.
-SECRET_KEY = "django-local-development-no-accounts-yet"
+# Local development only; public hosting needs separate production settings.
 DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
@@ -31,6 +31,12 @@ DB_VALUES = {
     **dotenv_values(BASE_DIR / ".env", interpolate=False),
     **os.environ,
 }
+SECRET_KEY = DB_VALUES.get("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    raise ImproperlyConfigured(
+        "Set DJANGO_SECRET_KEY in the environment or run "
+        "python -m scripts.configure_django_secret."
+    )
 
 DATABASES = {
     "default": {

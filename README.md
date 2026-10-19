@@ -19,6 +19,7 @@ Open PowerShell in the project folder. Use the existing environment directly; ac
 ```powershell
 Set-Location 'C:\Users\kshit\Documents\pothole_project'
 .\.pothholevenv\Scripts\python.exe -m pip install -r requirements.txt
+.\.pothholevenv\Scripts\python.exe -m scripts.configure_django_secret
 .\.pothholevenv\Scripts\python.exe manage.py runserver 127.0.0.1:8003
 ```
 
@@ -29,7 +30,7 @@ Alternatively, activate the environment and use the shorter command:
 python manage.py runserver 127.0.0.1:8003
 ```
 
-If PowerShell blocks activation, use the direct commands above; no execution-policy change is needed. You only need to install requirements on first setup or when they change.
+If PowerShell blocks activation, use the direct commands above; no execution-policy change is needed. You only need to install requirements on first setup or when they change. The signing-key command is safe to repeat: it preserves an existing key. See [Django lesson 5](docs/django-step-5.md).
 
 Open http://127.0.0.1:8003 to see:
 
@@ -57,6 +58,7 @@ The existing phone recording page still runs through the earlier FastAPI server 
 | `app/main.py` | Earlier FastAPI server, kept during the phone-page transition. |
 | `app/database.py` | Reads local connection settings and checks PostgreSQL with `SELECT 1`. |
 | `scripts/configure_database.py` | Prompts for the application password locally, checks it, and saves the ignored `.env`. |
+| `scripts/configure_django_secret.py` | Creates an ignored private Django signing key without printing it. |
 | `.env.example` | Password-free reference for database settings. |
 | `tests/test_database.py` | Checks configuration, password preservation, connection failures and endpoint responses. |
 | `app/__init__.py` | Marks `app` as a Python package. |
