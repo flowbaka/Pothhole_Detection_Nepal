@@ -12,6 +12,8 @@ The recording page captures a short video and timestamped browser location readi
 
 [Django lesson 13](docs/django-step-13.md) adds a private journey-input check before video processing. It verifies video availability and summarizes GPS timing issues through an owner-only API or the local `check_capture_inputs` command. It does not decode video or detect potholes.
 
+[Django lesson 14](docs/django-step-14.md) adds the local `inspect_capture_video` command. It uses PyAV in a bounded child process to decode a journey's MP4 and summarize actual frame counts and presentation timing. It has been tested with generated H.264 clips; real phone decoding is pending.
+
 ## Run on Windows (PowerShell)
 
 The existing virtual environment in this workspace is named `.pothholevenv` (with an extra `h`), and was created with Python 3.13. The commands below use that exact name. A virtual environment keeps this project's Python packages separate from other projects. Both `.pothholevenv/` and `.potholevenv/` are excluded from Git.
@@ -73,6 +75,10 @@ The existing phone recording page still runs through the earlier FastAPI server 
 | `captures/input_checks.py` | Summarizes video availability and GPS timing without exposing coordinates. |
 | `captures/management/commands/check_capture_inputs.py` | Prints the input summary for one local session ID. |
 | `captures/test_input_checks.py` | Tests the input check with synthetic records, temporary files and ownership checks. |
+| `captures/video_inspection.py` | Runs a bounded decoder process for one private stored video. |
+| `captures/video_probe.py` | Decodes the first video stream and returns basic properties without saving frames. |
+| `captures/management/commands/inspect_capture_video.py` | Prints the local video-decoding report for a session ID. |
+| `captures/test_video_inspection.py` | Generates synthetic H.264 clips and tests decoding and failure handling. |
 | `.env.example` | Password-free reference for database settings. |
 | `tests/test_database.py` | Checks configuration, password preservation, connection failures and endpoint responses. |
 | `app/__init__.py` | Marks `app` as a Python package. |
