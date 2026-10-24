@@ -8,6 +8,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .input_checks import check_session_inputs
 from .models import CaptureSession, GPSReading
 from .serializers import CaptureSessionSerializer, GPSBatchSerializer
 
@@ -32,6 +33,12 @@ class CaptureSessionUploadStatusView(APIView):
                 "gps_reading_count": session.gps_readings.count(),
             }
         )
+
+
+class CaptureSessionInputCheckView(APIView):
+    def get(self, request, session_id):
+        session = get_object_or_404(CaptureSession, pk=session_id, owner=request.user)
+        return Response(check_session_inputs(session))
 
 
 MAX_VIDEO_BYTES = 300 * 1024 * 1024

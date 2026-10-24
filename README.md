@@ -10,6 +10,8 @@ The backend is moving from FastAPI to Django in small lessons. [Django lesson 1]
 
 The recording page captures a short video and timestamped browser location readings, then offers two local downloads. The user confirmed iPhone camera/location access, MP4 playback both on the page and after downloading to Files, and recording stopping with an interruption message when leaving Safari. Two real iPhone exports passed the local checker's timing-consistency and video filename, size and header checks. The outdoor test still had a 4.45-second initial location gap; exact video/location alignment and road-position accuracy remain unverified. Android device testing is pending. The recorder prefers H.264/MP4 when supported. The Django API now accepts private journey uploads, but the browser recorder is not connected to that API. Detection and the public map remain future milestones.
 
+[Django lesson 13](docs/django-step-13.md) adds a private journey-input check before video processing. It verifies video availability and summarizes GPS timing issues through an owner-only API or the local `check_capture_inputs` command. It does not decode video or detect potholes.
+
 ## Run on Windows (PowerShell)
 
 The existing virtual environment in this workspace is named `.pothholevenv` (with an extra `h`), and was created with Python 3.13. The commands below use that exact name. A virtual environment keeps this project's Python packages separate from other projects. Both `.pothholevenv/` and `.potholevenv/` are excluded from Git.
@@ -68,6 +70,9 @@ The existing phone recording page still runs through the earlier FastAPI server 
 | `scripts/configure_django_secret.py` | Creates an ignored private Django signing key without printing it. |
 | `captures/management/commands/create_rider.py` | Interactively creates a non-admin local test rider and shows a private API token once. |
 | `captures/management/commands/import_phone_export.py` | Validates a paired MP4/JSON phone export and optionally imports it as a private experiment. |
+| `captures/input_checks.py` | Summarizes video availability and GPS timing without exposing coordinates. |
+| `captures/management/commands/check_capture_inputs.py` | Prints the input summary for one local session ID. |
+| `captures/test_input_checks.py` | Tests the input check with synthetic records, temporary files and ownership checks. |
 | `.env.example` | Password-free reference for database settings. |
 | `tests/test_database.py` | Checks configuration, password preservation, connection failures and endpoint responses. |
 | `app/__init__.py` | Marks `app` as a Python package. |
